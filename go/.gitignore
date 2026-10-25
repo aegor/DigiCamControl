@@ -1,0 +1,7 @@
+/dicam
+/dicam.exe
+*.test
+/coverage.out
+/coverage.html
+/recordings/
+/.deps/
