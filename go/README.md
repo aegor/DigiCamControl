@@ -69,7 +69,9 @@ make build
 
 `make build` скачивает **FFmpeg 8.0.3** с официального сайта, проверяет
 зафиксированный SHA-256, собирает минимальные статические библиотеки и затем
-`dicam`. Все зависимости и кеши размещаются в `go/.deps/`; системная установка
+`dicam`. Зависимости размещаются в `go/.deps/<GOOS>-<GOARCH>/`; каталоги FFmpeg
+включают отпечаток компилятора, SDK, флагов и скриптов. В Electron-сборке
+`DICAM_NATIVE_CACHE` перенаправляет их в `.cache/<target>/native/`; системная установка
 FFmpeg не производится. Первая сборка занимает несколько минут, последующие
 используют уже собранные библиотеки. Число параллельных задач можно изменить:
 
@@ -97,7 +99,7 @@ HTML встроен в бинарный файл: после его измене
 Нужны Windows Go >= 1.24, Git Bash и MinGW-w64 GCC с C11, make и pkg-config.
 В этой рабочей копии используется w64devkit в `C:/w64devkit/bin`.
 Go можно установить отдельно либо распаковать официальный Windows amd64 ZIP
-в `go/.deps/toolchain/` (получится `toolchain/go/bin/go.exe`), проверив SHA-256
+в `go/.deps/toolchain/windows-amd64/` (получится `toolchain/windows-amd64/go/bin/go.exe`), проверив SHA-256
 по https://go.dev/dl/. Системные настройки PATH менять не требуется.
 
 Из корня репозитория в PowerShell:
@@ -247,3 +249,12 @@ node web/ui_test.cjs
 FFmpeg собран без GPL/nonfree-компонентов. Сведения об исходниках, лицензии
 LGPL-2.1-or-later и повторной линковке находятся в
 [third_party/ffmpeg/NOTICE.md](third_party/ffmpeg/NOTICE.md).
+
+## Изоляция при сборке Electron
+
+Для Electron используйте команды из [electron/README.md](../electron/README.md).
+Они передают отдельный `DICAM_NATIVE_CACHE`, `GOCACHE`, `GOMODCACHE` и путь `BINARY`.
+Обычный `make build` по-прежнему создаёт `go/dicam` / `go/dicam.exe`, но кеши
+по умолчанию теперь находятся в `go/.deps/<GOOS>-<GOARCH>/`. Старые кеши не удаляются.
+Общий `scripts/build-env.sh` выбирает одинаковые библиотеки для FFmpeg и cgo;
+новый компилятор, SDK, флаги или рецепт создают новый каталог сборки.

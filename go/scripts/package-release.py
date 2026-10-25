@@ -23,6 +23,17 @@ def digest(path):
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
+def ffmpeg_source():
+    # Only raw, checksummed sources are portable; never reuse compiled libraries.
+    candidates = sorted((ROOT / "go/.deps").glob(f"*/downloads/{FFMPEG}"))
+    candidates += sorted((ROOT / ".cache").glob(f"*/native/downloads/{FFMPEG}"))
+    candidates.append(ROOT / "go/.deps/downloads" / FFMPEG)  # older release caches
+    for candidate in candidates:
+        if candidate.is_file() and digest(candidate) == FFMPEG_SHA:
+            return candidate
+    raise ValueError("No verified FFmpeg source archive; build the Go backend first")
+
+
 def source_files():
     # Explicit source roots prevent caches, local SDK paths, keys and AppleDouble
     # metadata from entering a release, including when Git files are untracked.
@@ -96,9 +107,7 @@ def main():
         for name in ("assets/licenses/NOTICE.txt", "assets/licenses/LGPL-2.1.txt"):
             if not archive.read(name):
                 raise ValueError(f"APK license missing: {name}")
-    ffmpeg = ROOT / "go/.deps/downloads" / FFMPEG
-    if digest(ffmpeg) != FFMPEG_SHA:
-        raise ValueError("FFmpeg source checksum mismatch")
+    ffmpeg = ffmpeg_source()
 
     rebuilding = f"""# Пересборка и перелинковка {tag}
 
@@ -113,7 +122,8 @@ macOS-бинарник перенесён с Mac (Go 1.24.5); исходники
 
 Распакуйте `source/{stem}-source.tar.gz` в каталог без пробелов.
 Возьмите отдельный файл `{FFMPEG}` рядом с desktop-пакетами в каталоге релиза
-и скопируйте его в `go/.deps/downloads/` внутри исходников.
+и скопируйте его в `go/.deps/<GOOS>-<GOARCH>/downloads/` внутри исходников
+(например, `darwin-arm64` или `windows-amd64`).
 SHA-256 FFmpeg: `{FFMPEG_SHA}`.
 
 На macOS/Linux установите Go >= 1.24, C-компилятор, make, pkg-config, curl,
@@ -122,7 +132,9 @@ tar/xz и sha256sum/shasum. Из каталога `go` выполните `make 
 исходников в Git Bash выполните `bash go/scripts/windows.sh build`.
 Подробности настройки инструментов и проверки: `go/README.md`.
 
-FFmpeg собирается в `go/.deps/ffmpeg-8.0.3-<os>-<arch>`.
+FFmpeg собирается в `go/.deps/<GOOS>-<GOARCH>/ffmpeg-8.0.3-<fingerprint>`.
+Отпечаток учитывает компилятор, SDK, флаги и скрипты сборки; точный prefix
+выводит `make ffmpeg`.
 Чтобы использовать изменённый FFmpeg, соберите его статические библиотеки и
 заголовки в этот prefix, сохранив pkg-config metadata. Затем из `go` выполните:
 `bash scripts/go.sh build -a -o dicam .` (Windows: `-o dicam.exe`, тот же PATH

@@ -13,3 +13,20 @@ local.properties
 *.aab
 *.apks
 *.hprof
+
+.cache/
+.DS_Store
+
+# Generated installers and release binaries live locally or in release storage.
+/dist/
+
+# Dependency trees and caches, at any depth.
+node_modules/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.npm/
+.venv/
+venv/

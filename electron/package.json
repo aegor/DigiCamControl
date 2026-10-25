@@ -1,0 +1,68 @@
+{
+  "name": "dicam-desktop",
+  "version": "0.1.0",
+  "description": "DiCam desktop camera controller — Electron and Go",
+  "author": "DiCam contributors",
+  "license": "MIT",
+  "private": true,
+  "main": "src/main.cjs",
+  "scripts": {
+    "start": "node scripts/build.cjs start",
+    "backend": "node scripts/build.cjs backend",
+    "prepare:backend": "node scripts/build.cjs prepare:backend",
+    "test": "node scripts/build.cjs test",
+    "pack": "node scripts/build.cjs pack",
+    "dist": "node scripts/build.cjs dist",
+    "test:smoke": "node scripts/build.cjs test:smoke",
+    "dmg:arm64": "node scripts/build.cjs dmg:arm64",
+    "paths": "node scripts/build.cjs paths",
+    "setup": "node scripts/build.cjs install",
+    "postinstall": "node scripts/dependency-platform.cjs",
+    "test:go": "node scripts/build.cjs test:go",
+    "vet:go": "node scripts/build.cjs vet:go"
+  },
+  "build": {
+    "appId": "io.github.aegor.dicam",
+    "productName": "DiCam Controller",
+    "directories": {
+      "output": "release/${env.DICAM_BUILD_TARGET}"
+    },
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "resources/${env.DICAM_BUILD_TARGET}",
+        "to": "backend"
+      }
+    ],
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "category": "public.app-category.photography",
+      "extendInfo": {
+        "NSLocalNetworkUsageDescription": "DiCam connects to your Wi-Fi cameras for live preview and recording control."
+      },
+      "identity": "-"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "AudioVideo"
+    },
+    "beforePack": "scripts/before-pack.cjs",
+    "afterPack": "scripts/mac-identity.cjs"
+  },
+  "devDependencies": {
+    "electron": "45.0.0",
+    "electron-builder": "26.18.0"
+  }
+}

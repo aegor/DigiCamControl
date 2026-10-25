@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src http://127.0.0.1:*; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<title>DiCam Controller</title>
+<link rel="stylesheet" href="styles.css">
+<script src="renderer.js" defer></script>
+</head>
+<body>
+<header>
+  <div class="brand"><span class="logo">D</span><div><h1>DiCam <span>Controller</span></h1><small>КАМЕРЫ · ПРЯМОЙ ЭФИР</small></div></div>
+  <div class="actions">
+    <div class="burst"><span>Burst</span><button data-command="burst" data-duration="1" disabled>1 с</button><button data-command="burst" data-duration="3" disabled>3 с</button><button data-command="burst" data-duration="5" disabled>5 с</button></div>
+    <button class="record" data-command="start" disabled>● Запись</button>
+    <button data-command="stop" disabled>■ Стоп</button>
+    <button id="settings-toggle" aria-expanded="true" aria-controls="settings">Настройки</button>
+  </div>
+</header>
+<div id="recording-status" class="recording-status" role="status" aria-live="polite">Подключение…</div>
+<div id="error" role="alert" hidden></div>
+<div id="network-help" class="network-help" hidden><span>Нет ответа от камеры. Проверьте подключение к её Wi-Fi. Если другие приложения видят камеру, проверьте доступ DiCam Controller к локальной сети в настройках macOS. Причина отказа пока не установлена; попытки подключения продолжаются.</span><button id="network-settings">Настройки локальной сети</button></div>
+<main>
+  <aside id="settings">
+    <h2>Подключение</h2>
+    <p>Подключите компьютер к Wi-Fi камеры. DiCam восстановит связь, если камера перезапустится.</p>
+    <form id="config-form">
+      <label for="cameras">IP-адреса камер</label>
+      <textarea id="cameras" rows="3" spellcheck="false" placeholder="192.168.1.1"></textarea>
+      <small>Каждый адрес с новой строки</small>
+      <label for="bind">Локальный IP</label>
+      <input id="bind" placeholder="Автоматически" spellcheck="false">
+      <small>Для отдельного Wi-Fi адаптера: 192.168.1.10, если этот IP назначен интерфейсу</small>
+      <div id="usb-settings" hidden><label for="usb">USB-устройства</label><textarea id="usb" rows="2" placeholder="/dev/video0 или auto"></textarea></div>
+      <label for="recordDir">Папка USB-записей</label>
+      <div class="directory"><input id="recordDir" readonly><button id="choose-directory" type="button" aria-label="Выбрать папку">…</button></div>
+      <small>Wi-Fi камеры записывают на свою SD-карту</small>
+      <button id="connect" class="connect" type="submit">Подключить</button>
+    </form>
+    <button id="open-recordings" class="text-button">Открыть папку записей ↗</button>
+    <div class="hint">Запись и Burst управляют всеми подключёнными камерами одновременно.</div>
+  </aside>
+  <section id="grid" aria-label="Камеры">
+    <div id="empty"><div class="camera-icon">▣</div><h2>Камеры появятся здесь</h2><p>Подключаемся к камерам автоматически…</p></div>
+  </section>
+</main>
+<div id="burst-progress" hidden><span id="burst-label"></span><progress id="progress" max="100" value="0"></progress></div>
+<footer><span id="connection" role="status" aria-live="polite">Готов к подключению</span><span id="summary">Electron + Go · DiCam</span></footer>
+<template id="camera-template">
+  <article class="camera">
+    <div class="camera-head"><strong class="camera-title"></strong><span class="state"></span></div>
+    <div class="viewport"><img alt="Превью камеры"><div class="placeholder">Ожидание видеопотока…</div><span class="rec" hidden>● REC</span></div>
+    <div class="camera-foot"><span class="meta"></span><span class="fps"></span></div>
+    <div class="camera-error" hidden></div>
+  </article>
+</template>
+</body>
+</html>
