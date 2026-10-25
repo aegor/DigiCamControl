@@ -18,5 +18,5 @@
 
 > DiCam-Controller-0.1.0-macos-arm64.dmg и 
 > DiCam-Controller-0.1.0-windows-x64-setup.exe
-> Это полноценные графические UI с классическим сетапом для Mac Os и Windows, построенные на основе electron, того же фрейворка, на котором построен VS Code.
+> Это полноценные графические UI с классическим сетапом для Mac Os и Windows, построенные на основе electron, того же фреймворка, на котором построен VS Code.
 
