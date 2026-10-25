@@ -110,6 +110,9 @@ npm run dist
 - Помимо переменных `ELECTRON_CACHE`/`electron_config_cache`, упаковщик получает
   **явный `electronDownload.cache`**. Одной переменной окружения для нашей версии
   electron-builder недостаточно. `npm run paths` показывает действующие пути.
+- Массивы `extraResources`, `files` и targets хранить только в `package.json`:
+  electron-builder сам читает его и объединяет массивы с overrides. Повторная
+  передача ресурсов из build.cjs вызывает двойное копирование и Windows `EBUSY`.
 - Движок: `.cache/<target>/bin/dicam` или `dicam.exe`. Ресурсы:
   `electron/resources/<target>/`. Подготовка очищает только каталог текущей цели.
 - Проверять реальный Mach-O/PE/ELF, архитектуру, `--desktop`, SHA-256 и manifest;

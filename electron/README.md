@@ -141,6 +141,13 @@ npm run dmg:arm64  # macOS ARM64: упаковать уже готовый .app 
 Рядом создаётся отдельный `.sha256`; служебные blockmap/YAML остаются в
 `release/<target>/`. Сборка не публикует файлы в сеть.
 
+Списки `extraResources`, `files` и целей упаковки задаются только в `package.json`.
+Обёртка не дублирует их: electron-builder объединяет массивы, что на Windows
+вызывает одновременное копирование движка в один файл и ошибку `EBUSY`.
+Если Electron отклоняет унаследованный `NODE_OPTIONS` с `--openssl-legacy-provider`,
+перед smoke-тестом удалите переменную только из текущей сессии PowerShell:
+`Remove-Item Env:NODE_OPTIONS -ErrorAction SilentlyContinue`.
+
 `--prepackaged` на macOS должен указывать на сам пакет `.app`, а не его родителя.
 `dmg:arm64` проверяет наличие `Contents/Info.plist`, чтобы исключить вложенный `.app`.
 После выпуска образа проверяйте структуру и подпись приложения внутри DMG.

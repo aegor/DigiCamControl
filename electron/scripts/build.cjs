@@ -43,12 +43,13 @@ async function main(action) {
   const { build, createTargets, Platform } = require('electron-builder');
   const platform = { darwin: Platform.MAC, win32: Platform.WINDOWS, linux: Platform.LINUX }[paths.platform];
   const type = action === 'pack' ? 'dir' : { darwin: 'dmg', win32: 'nsis', linux: 'AppImage' }[paths.platform];
-  const config = { ...require('../package.json').build,
+  // Builder loads package.json itself and concatenates arrays from overrides.
+  // Keep extraResources/files/targets there to avoid concurrent duplicate copies.
+  const config = {
     directories: { output: paths.release },
     electronDownload: { cache: env.ELECTRON_CACHE },
     beforePack: path.join(paths.electron, 'scripts/before-pack.cjs'),
     afterPack: path.join(paths.electron, 'scripts/mac-identity.cjs'),
-    extraResources: [{ from: paths.resources, to: 'backend' }],
     artifactName: `DiCam-Controller-\${version}-${{darwin:'macos',win32:'windows',linux:'linux'}[paths.platform]}-${paths.arch}${paths.platform === 'win32' ? '-setup' : ''}.\${ext}` };
   const options = { projectDir: paths.electron, targets: createTargets([platform], type, paths.arch), config, publish: 'never' };
   if (action === 'dmg:arm64') {

@@ -80,3 +80,14 @@ SHA256SUMS обновлён, сумма Windows подтверждена. В э�
    и скрипты. Теперь актуализированы CONTEXT_STATIC.md, CONTEXT_DYNAMIC.md,
    CLAUDE.md и этот журнал. Старые результаты оставлены как явно обозначенный архив.
    Само это обновление памяти пока не закоммичено и не отправлено.
+
+## 2026-10-26 — нативная Windows-сборка Electron
+
+По запросу пользователя выполнены install, backend, 12 Node-тестов, Go -race,
+vet, smoke окна, pack и dist в F:/Hardware/DICAM/tmp/DigiCamControl.
+Исправлено двойное копирование extraResources при слиянии package.json с overrides
+build.cjs, вызывавшее EBUSY. В smoke очищен только унаследованный NODE_OPTIONS
+процесса (Electron не принимает --openssl-legacy-provider).
+Установщик и SHA-256 находятся в dist; PE x64, зависимости движка, manifest,
+лицензии, исходники и контрольные суммы проверены. Установка в ОС и реальная
+камера не тестировались. Коммит и публикация не выполнялись.

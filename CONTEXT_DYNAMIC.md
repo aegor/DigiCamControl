@@ -6,7 +6,8 @@
 
 ## Текущая копия и Git
 
-- Корень: `/Users/egor/src/DICAM/tmp/DigiCamControl`, macOS ARM64.
+- Текущая сборка 2026-10-26: `F:/Hardware/DICAM/tmp/DigiCamControl`, Windows x64.
+  Предыдущая копия: `/Users/egor/src/DICAM/tmp/DigiCamControl`, macOS ARM64.
 - Ветка `main`. На момент обновления памяти HEAD и локальная ссылка `origin/main`:
   `0ef7c18` (`electron v2`). Push в `github.com:aegor/DigiCamControl.git` прошёл.
 - По явному запросу пользователя коммит `266da9a` переписан: из него исключён DMG
@@ -54,13 +55,27 @@
 - Проверены macOS .app, подпись и полный выпуск DMG новой командой `dist`.
   В смонтированном DMG проверены правильный Info.plist, подпись и совпадение Go-бинарника
   с результатом упаковки. SHA-256 установщика совпал с созданным `.sha256`.
-- Windows Electron NSIS-сборка **ещё не выполнялась**. Скрипты подготовлены;
-  следующая проверка — нативная сборка в отдельном клоне на Windows x64.
-  Не приписывать ей старые успешные тесты standalone Go EXE из архива ниже.
+- Windows Electron NSIS-сборка выполнена 2026-10-26 в текущей Windows-копии.
+  Node 25.6.1, Go 1.27.3 windows/amd64, FFmpeg 8.0.3, Electron 45.0.0.
+  Для сессии задан `DICAM_GIT_BASH=C:/pf/Git/bin/bash.exe`; Go-компилятор взят
+  из `F:/Hardware/DICAM/DigiCamControl/go/.deps/toolchain/go/bin` через PATH.
+  Библиотеки, ресурсы и кеши заново созданы в текущей копии, старые не переносились.
+  Исправлено дублирование extraResources: build.cjs больше не передаёт массивы,
+  которые electron-builder уже читает из package.json. Это устранило Windows EBUSY.
+  Пройдены 12 Node-тестов без пропусков, Go -race, vet, smoke окна на loopback,
+  pack и dist. Для smoke из окружения процесса убран несовместимый NODE_OPTIONS.
+  Проверены PE x64, системные DLL движка, --desktop, manifest/SHA-256,
+  лицензии и исходники для перелинковки внутри win-unpacked.
+  Установщик 140124792 байт; SHA-256:
+  `1d50a8c1fbd57b5a0f7b6408459445c2c8c04638b36a59c5e28bab3951f498e2`.
+  Установка в ОС и физическая камера не проверялись. Сертификат подписи не задан.
 - CI пока не добавлен. GitHub Release не создавался.
 
 ## Локальные артефакты
 
+- Windows: `electron/release/win32-x64/win-unpacked/DiCam Controller.exe`.
+- Windows: `dist/DiCam-Controller-0.1.0-windows-x64-setup.exe` и `.exe.sha256`.
+- Перечисленные ниже macOS-файлы относятся к предыдущей macOS-копии:
 - `electron/release/darwin-arm64/mac-arm64/DiCam Controller.app`
 - `dist/DiCam-Controller-0.1.0-macos-arm64.dmg`
 - `dist/DiCam-Controller-0.1.0-macos-arm64.dmg.sha256`

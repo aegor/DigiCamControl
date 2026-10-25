@@ -18,7 +18,9 @@ when build rules change; updating README alone is insufficient.
   output: `electron/release/<target>/`. The wrapper explicitly sets Electron's download
   cache in builder configuration as well as environment variables. `npm run paths`
   reports the locations. Windows target is `win32-x64`; use Git for Windows Bash,
-  not WSL. Windows Electron packaging is prepared but not yet validated on Windows.
+  not WSL. Windows pack/NSIS and local tests passed on 2026-10-26.
+  Keep resource/file/target arrays in package.json only: builder merges arrays
+  from overrides, causing duplicate concurrent copies and Windows EBUSY.
 - Validate actual native binary format, architecture, `--desktop` and SHA-256, not
   only a platform manifest. FFmpeg directories include compiler/SDK/flags/recipe fingerprints.
 - DMG `--prepackaged` must point to the `.app` itself. Inspect the mounted image's
