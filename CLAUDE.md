@@ -2,9 +2,39 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Current build and repository rules
+
+Read `CONTEXT_STATIC.md`, the current (non-archive) section of `CONTEXT_DYNAMIC.md`,
+and `electron/README.md` before desktop build/release work. Update those memory files
+when build rules change; updating README alone is insufficient.
+
+- Use the current checkout reported by cwd and Git. The active copy on 2026-10-26
+  was `/Users/egor/src/DICAM/tmp/DigiCamControl`; older recorded roots are historical.
+- Native builds only; use a separate checkout for each OS/architecture. Never share
+  `node_modules`, generated resources, compiled FFmpeg libraries or build directories.
+- From `electron/`: `node scripts/build.cjs install`, `npm run backend`, `npm test`,
+  `npm run test:go`, `npm run vet:go`, `npm run test:smoke`, `npm run pack` / `npm run dist`.
+- Caches: `.cache/<target>/`; resources: `electron/resources/<target>/`;
+  output: `electron/release/<target>/`. The wrapper explicitly sets Electron's download
+  cache in builder configuration as well as environment variables. `npm run paths`
+  reports the locations. Windows target is `win32-x64`; use Git for Windows Bash,
+  not WSL. Windows Electron packaging is prepared but not yet validated on Windows.
+- Validate actual native binary format, architecture, `--desktop` and SHA-256, not
+  only a platform manifest. FFmpeg directories include compiler/SDK/flags/recipe fingerprints.
+- DMG `--prepackaged` must point to the `.app` itself. Inspect the mounted image's
+  `App.app/Contents/Info.plist` and signature; a valid DMG checksum alone is insufficient.
+- Preserve `mac-identity.cjs`: it gives DiCam executables distinct Mach-O UUIDs BEFORE
+  signing, avoiding collisions with stock Electron in macOS network privacy handling.
+- Installers and hashes go to ignored root `dist/`. Do not commit dist, caches,
+  node_modules, generated applications/resources, or files/directories over 50 MB.
+  Audit the actual index; ignore rules cannot exclude by size or untrack existing files.
+  Keep local artifacts when untracking. History rewriting and push need user instruction.
+- UI auto-connects; Record/Stop show pending states until command completion. The
+  Settings button is red while expanded. Wait for process exit before reopening the app.
+
 ## What this repo actually is
 
-A reverse-engineering project against the **Larkfly A6+** action camera (iCatch V39A-family SoC; `V11` is the ODM/white-label model code the firmware reports in `ProductName`, **not** an iCatch designation — the same hardware also sells as VIRAN/CERASTES V11; firmware build `20251206`). The `larkfly/` Python package is the production output; everything else (`tools/`, `analyses/`, `apk-analysis/`) is investigation infrastructure that produced it. Treat investigation tools as one-shot artifacts — the conclusions they reach get folded into `docs/findings.md` and the `larkfly` code, and the tools live on as reproducible references rather than as code to be polished.
+A reverse-engineering project against the **Larkfly A6+** action camera (iCatch V39A-family SoC; `V11` is the ODM/white-label model code the firmware reports in `ProductName`, **not** an iCatch designation — the same hardware also sells as VIRAN/CERASTES V11; firmware build `20251206`). The `larkfly/` Python library, Python web UI, Go controller, Electron desktop app and Android app are application outputs. `tools/`, `analyses/` and `apk-analysis/` are investigation infrastructure. Treat investigation tools as one-shot artifacts — the conclusions they reach get folded into `docs/findings.md` and the `larkfly` code, and the tools live on as reproducible references rather than as code to be polished.
 
 **Read `docs/findings.md` before changing anything in `larkfly/`.** The protocol-level behavior is non-obvious, off-spec, and has cost us multiple wasted experiments to characterize. The README has a high-level summary; `findings.md` has the wire details.
 
@@ -71,6 +101,9 @@ The camera's FTP server (`wificam:wificam` on port 21) shows the SD card root, b
 
 - **`larkfly/`** — production library. Pure-stdlib core. `protocol.py` = wire codec (where the four quirks live); `camera.py` = high-level orchestration; `types.py` = constants; `exceptions.py` = typed errors.
 - **`webui/`** — Flask + OpenCV multi-camera viewer; orthogonal to the protocol work.
+- **`go/`** — native PTP/IP controller and statically linked FFmpeg video engine.
+- **`electron/`** — desktop UI, managed Go child process, isolated build/packaging scripts.
+- **`android/`** — standalone Java/LibVLC camera app.
 - **`tools/`** — operational utilities that talk to the camera live. `tools/README.md` is the canonical catalog. New diagnostic scripts go here; promote findings into `larkfly/` once stable.
 - **`analyses/`** — offline RE scripts + their data outputs. `analyses/data/*.json` are large reference dumps (property catalog, vendor probe matrix, 0x9805 binary). Don't re-generate without reason.
 - **`docs/`** — `findings.md` is canonical; `dev-console-hunt.md` is the running log of the shell-access hunt; `untried-vectors.md` is the forward-looking attack inventory; `archive/` is the chronological RE story.
