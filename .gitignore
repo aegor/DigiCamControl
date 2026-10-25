@@ -1,11 +1,12 @@
 apk-analysis/
-*.apk
-*.dex
 *.smali
 **/__pycache__/
 *.pyc
 .venv/
 .claude/
+
+**/.deps
+/dist/*
 
 # Python packaging and test artifacts
 *.egg
