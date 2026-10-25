@@ -1,0 +1,15 @@
+.gradle/
+.gradle-user-home/
+.deps/
+.sdk/
+.local-tools/
+local.properties
+**/build/
+*.jks
+*.keystore
+.idea/
+.cxx/
+.externalNativeBuild/
+*.aab
+*.apks
+*.hprof

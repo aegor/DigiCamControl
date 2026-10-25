@@ -1,0 +1,37 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'com.dicam.controller'
+    compileSdk { version = release(37) { it.minorApiLevel = 0 } }
+    buildToolsVersion "36.0.0"
+    defaultConfig {
+        applicationId 'com.dicam.controller'
+        minSdk 26
+        targetSdk 36
+        versionCode 3
+        versionName '0.2.1'
+        testInstrumentationRunner 'com.dicam.controller.PingInstrumentation'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+}
+
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        variant.outputs.each { output ->
+            output.outputFileName.set("Digma DiCam Contoller.apk")
+        }
+    }
+}
+
+dependencies {
+    implementation "org.videolan.android:libvlc-all:3.7.7"
+    testImplementation "junit:junit:4.13.2"
+}

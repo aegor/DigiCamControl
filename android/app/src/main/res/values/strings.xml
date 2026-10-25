@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Digma DiCam Contoller</string>
+    <string name="camera">Камера</string>
+    <string name="record">Record</string>
+    <string name="stop">Stop</string>
+    <string name="rec">● REC</string>
+    <string name="camera_title">Подключение к камере</string>
+    <string name="camera_help">Подключите телефон к Wi-Fi камеры. Укажите IP-адрес камеры (обычно 192.168.1.1). Компьютер и сервер не нужны.</string>
+    <string name="connect">Подключиться</string>
+    <string name="cancel">Отмена</string>
+    <string name="invalid_address">Введите IPv4-адрес камеры, например 192.168.1.1</string>
+    <string name="connecting">Connecting to camera…</string>
+    <string name="lost_connection">lost connection to camera</string>
+    <string name="video_reconnecting">Камера подключена · восстановление видео…</string>
+    <string name="connected">Камера подключена</string>
+    <string name="diagnostics">Диагностика</string>
+</resources>

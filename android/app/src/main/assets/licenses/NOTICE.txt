@@ -1,0 +1,12 @@
+This application includes unmodified LibVLC Android 3.7.7 by VideoLAN,
+linked as shared libraries. License: GNU LGPL version 2.1 or later.
+
+Upstream source and build instructions:
+https://code.videolan.org/videolan/libvlcjni
+https://code.videolan.org/videolan/vlc
+Published version and source package:
+https://repo.maven.apache.org/maven2/org/videolan/android/libvlc-all/3.7.7/
+
+The Android project can be rebuilt against a modified LibVLC AAR by replacing
+the dependency in app/build.gradle. See README.md for build instructions.
+The license is included as LGPL-2.1.txt in this directory.

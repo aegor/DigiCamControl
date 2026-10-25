@@ -1,40 +1,15 @@
-apk-analysis/
-*.smali
-**/__pycache__/
-*.pyc
-.venv/
-.claude/
-
-**/.deps
-/dist/*
-
-# Python packaging and test artifacts
-*.egg
-*.egg-info/
-.eggs/
-/build/
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-.coverage
-.coverage.*
-htmlcov/
-
-# Local editor, OS and runtime files
-.DS_Store
-._*
+.gradle/
+.gradle-user-home/
+.deps/
+.sdk/
+.local-tools/
+local.properties
+**/build/
+*.jks
+*.keystore
 .idea/
-*.swp
-*.swo
-*.log
-*.pid
-
-# Native build artifacts
-*.o
-*.a
-*.so
-*.dylib
-
-# Recovered media pulled off the camera via tools/ftp_pull.py — never commit
-recovered/
-*.MOV
+.cxx/
+.externalNativeBuild/
+*.aab
+*.apks
+*.hprof
