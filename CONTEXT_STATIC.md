@@ -8,8 +8,9 @@
 
 ## Рабочая папка и границы работы
 
-Текущая рабочая копия этого сеанса: `/Users/egor/src/DICAM/tmp/DigiCamControl`
-(macOS ARM64). `/Users/egor/src/DICAM/DigiCamControl` и
+Текущая рабочая копия: `F:/Hardware/DICAM/tmp/DigiCamControl` (Windows x64).
+`/Users/egor/src/DICAM/tmp/DigiCamControl` — предыдущая копия macOS ARM64.
+`/Users/egor/src/DICAM/DigiCamControl` и
 `F:/Hardware/DICAM/DigiCamControl` — исторические пути других копий.
 Перед работой проверять фактический cwd, `git rev-parse --show-toplevel` и
 `git status`; не переключаться на соседнюю копию по старым записям памяти.
@@ -125,6 +126,14 @@ npm run dist
   MinGW — `DICAM_MINGW_BIN`; локальный Go ищется в
   `go/.deps/toolchain/windows-amd64/go/bin`. Пути сборки FFmpeg — без пробелов.
 - Собирать нативно на целевой ОС/архитектуре. `CGO_ENABLED=0` не заменяет FFmpeg.
+- Если Electron отвергает `NODE_OPTIONS` с `--openssl-legacy-provider`, убрать
+  переменную только из окружения запуска: в PowerShell
+  `Remove-Item Env:NODE_OPTIONS -ErrorAction SilentlyContinue`. Не менять
+  глобальные настройки Windows ради smoke-теста.
+- В ограниченной среде `spawn EPERM` и Git Bash `couldn't create signal pipe,
+  Win32 error 5` могут означать блокировку запуска песочницей. Проверка backend
+  также может ошибочно сообщить об отсутствии --desktop, если запуск запрещён.
+  Проверять первопричину и запрашивать необходимый доступ, а не менять код движка.
 - Старые общие `electron/resources`, `electron/release/mac-arm64`, `go/dicam` и
   старые кеши не подхватываются автоматически. Не удалять их без необходимости.
 
@@ -136,6 +145,14 @@ Windows x64: `electron/release/win32-x64/win-unpacked/`.
 `npm run dist` создаёт DMG/NSIS EXE/AppImage и копирует только установщик с отдельным
 `.sha256` в корневой `dist/`; blockmap/YAML остаются в платформенной release-папке.
 `npm run dmg:arm64` упаковывает уже собранный macOS ARM64 `.app`.
+
+**Windows:** проверять наличие установщика и совпадение его SHA-256 с отдельным
+файлом и копией в release. Один нулевой exit code недостаточен: при EBUSY
+упаковщик в этом окружении завершался с кодом 0 без готового установщика.
+В win-unpacked проверять PE x64 launcher/движка, manifest, лицензии и архив
+исходников FFmpeg. Отсутствие FFmpeg DLL относится к Go-движку; Electron имеет
+собственные библиотеки. Smoke на loopback не подтверждает работу с камерой
+или установку NSIS в ОС. Без сертификата Windows-пакет остаётся неподписанным.
 
 **DMG:** `--prepackaged` должен указывать на **сам `.app`**, не его родительскую
 папку. Иначе получается `.app/.app/Contents`, и Finder рисует перечёркнутый значок.
